@@ -17,21 +17,19 @@ class CalculatorViewController: UIViewController {
     @IBOutlet weak var twentyPctButton: UIButton!
     @IBOutlet weak var splitNumberLabel: UILabel!
     @IBOutlet weak var billTextField: UITextField!
+    
     @IBAction func tipChanged(_ sender: UIButton) {
         billTextField.endEditing(true)
-        switch sender.titleLabel?.text {
-        case "0%":
-            deactivateButtons()
-            zeroPctButton.isSelected = true
-        case "10%":
-            deactivateButtons()
-            tenPctButton.isSelected = true
-        case "20%":
-            deactivateButtons()
-            twentyPctButton.isSelected = true
-        default:
-            deactivateButtons()
-            zeroPctButton.isSelected = true
+        zeroPctButton.isSelected = false
+        tenPctButton.isSelected = false
+        twentyPctButton.isSelected = false
+        sender.isSelected = true
+        if zeroPctButton.isSelected {
+            tip = 0.0
+        } else if tenPctButton.isSelected {
+            tip = 0.1
+        } else if twentyPctButton.isSelected {
+            tip = 0.2
         }
     }
     
@@ -40,25 +38,13 @@ class CalculatorViewController: UIViewController {
         numberOfPeople = Int(sender.value)
     }
     @IBAction func calculatePressed(_ sender: UIButton) {
-        if zeroPctButton.isSelected {
-            tip = 0.0
-        } else if tenPctButton.isSelected {
-            tip = 0.1
-        } else if twentyPctButton.isSelected {
-            tip = 0.2
+        let bill = billTextField.text!
+        if bill != ""{
+            let res =  Double(bill)! * (1 + tip) /  Double(numberOfPeople)
+            result = String(format: "%.2f", res)
         }
-        print(splitNumberLabel.text!)
         
-        print(billTextField.text ?? 0)
-
-        result = String(format: "%.2f",(billTextField.text! as NSString).floatValue * (1 + Float(tip)) /  Float(numberOfPeople))
         self.performSegue(withIdentifier: "goToResult", sender: self)
-    }
-    
-    func deactivateButtons(){
-        zeroPctButton.isSelected = false
-        tenPctButton.isSelected = false
-        twentyPctButton.isSelected = false
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
